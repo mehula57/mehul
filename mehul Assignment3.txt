@@ -1,0 +1,201 @@
+3.
+
+package handsonexercise;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+import org.testng.asserts.SoftAssert;
+
+import utilities.selenium.WebDriverManager;
+
+public class DynamicData {
+	private WebDriver driver;
+	private WebDriverManager WebDrvMgr;
+	WebDriverWait wait;
+	SoftAssert sf;
+
+
+
+	@BeforeClass
+	public void setUp() {
+	WebDrvMgr = new WebDriverManager();
+	driver = WebDrvMgr.launchBrowser("chrome");
+	wait = new WebDriverWait(driver, 120);
+	driver.get("https://demo.seleniumeasy.com/dynamic-data-loading-demo.html");
+	}
+
+	@BeforeMethod
+	public void testPreReq() {
+	sf = new SoftAssert();
+	}
+
+	@Test
+	public void dynamicData() {
+	driver.findElement(By.id("save")).click();
+	By oLoading=By.id("loading");
+	wait.until(ExpectedConditions.invisibilityOfElementWithText(oLoading, "loading..."));
+
+	WebElement oPic=driver.findElement(By.xpath("//div[@id='loading']/img"));
+	String imgSrc=oPic.getAttribute("src");
+	sf.assertTrue(imgSrc.contains("jpg"),"FAIL | Image src"+imgSrc+" doesn't contain .jpg extension");
+	sf.assertTrue(oPic.getSize().getHeight()>0,"FAIL | IMage height should be greater than 0 but is"+oPic.getSize().getHeight());
+	sf.assertTrue(oPic.getSize().getWidth()>0,"FAIL | IMage width should be greater than 0 but is"+oPic.getSize().getWidth());
+
+	System.out.println(oPic.getSize().getHeight());
+	System.out.println(oPic.getSize().getWidth());
+
+	String name=driver.findElement(oLoading).getText();
+	String[] arrName=name.split("\n");
+	arrName[0].replace("First Name: ","");
+	arrName[2].replace("Last Name: ","");
+	sf.assertTrue(arrName[0].length()>0,"FAIL | First name lenght should be greater than 0 but is"+arrName[0]);
+	sf.assertTrue(arrName[2].length()>0,"FAIL | Last name lenght should be greater than 0 but is"+arrName[2]);
+	//System.out.println(driver.findElement(oLoading).getText());
+	sf.assertAll();
+
+	}
+
+
+	@AfterClass
+	public void tearDown() {
+	driver.quit();
+	}
+}
+
+
+2.
+
+
+package handsonexercise;
+
+//import java.util.List;
+
+import org.openqa.selenium.By;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import testng.assertion.SoftAssert;
+import utilities.selenium.WebDriverManager;
+
+
+
+public class SelectDropdown {
+	
+	private WebDriver driver;
+	private WebDriverManager webDrvMgr;
+	WebDriverWait wait;
+	SoftAssert sf;
+	
+	@BeforeClass
+	public void setUp(){
+		webDrvMgr = new WebDriverManager();
+		driver = webDrvMgr.launchBrowser("chrome");
+		wait = new WebDriverWait(driver, 120);
+		driver.get("https://demoqa.com/select-menu");
+	}
+	
+	@BeforeMethod
+	public void testPreReq() {
+		sf = new SoftAssert();
+	}
+	
+	@Test
+	public void selectDropdownTest() throws InterruptedException {
+		WebElement oDropdown = driver.findElement(By.id("oldSelectMenu"));
+		Select select = new Select(oDropdown);
+		select.selectByIndex(3);
+		Thread.sleep(2000);
+		select.selectByVisibleText("Black");
+		Thread.sleep(2000);
+		select.selectByValue("8");
+		Thread.sleep(2000);
+		
+	}
+		
+		
+	@AfterClass
+	public void tearDown(){
+		driver.quit();
+	}
+
+
+}
+
+1.
+
+package handsonexercise;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
+import utilities.selenium.WebDriverManager;
+
+public class Addition {
+
+	private WebDriver driver;
+	private WebDriverManager WebDrvMgr;
+	WebDriverWait wait;
+	private String val2;
+	private String val;
+
+	@BeforeClass
+	public void setUp() {
+		WebDrvMgr = new WebDriverManager();
+		driver = WebDrvMgr.launchBrowser("chrome");
+		wait = new WebDriverWait(driver, 120);
+		driver.get("http://demo.seleniumeasy.com/basic-first-form-demo.html");
+	}
+
+	@Test
+	public void dynamicData() throws InterruptedException {
+		driver.findElement(By.id("at-cv-lightbox-close")).click();
+		WebElement oTypeBox = driver.findElement(By.xpath("//input[@id='sum1']"));
+		oTypeBox.clear();
+		oTypeBox.sendKeys("5");
+		Thread.sleep(2000);
+		val = oTypeBox.getAttribute("value");
+		System.out.println(val);
+		WebElement oTypeBox2 = driver.findElement(By.xpath("//input[@id='sum2']"));
+		oTypeBox2.clear();
+		oTypeBox2.sendKeys("9");
+		Thread.sleep(2000);
+		val2 = oTypeBox2.getAttribute("value");
+		System.out.println(val2);
+		WebElement oTotalSum = driver.findElement(By.xpath("//button[@onclick='return total()']"));
+		oTotalSum.click();
+
+		if (!val.equals(0) && !val2.equals(0)) {
+			WebElement oTotal = driver.findElement(By.xpath("//span[@id='displayvalue']"));
+			System.out.println(oTotal.getText());
+
+		} else {
+			WebElement oTotal = driver.findElement(By.xpath("//span[@id='displayvalue']"));
+			System.out.println(oTotal.getText());
+		}
+
+	}
+
+	@AfterClass
+	public void tearDown() {
+		driver.quit();
+	}
+}
